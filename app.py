@@ -1,10 +1,3 @@
-import os
-import pandas as pd
-import re
-import numpy as np
-import pandas as pd
-import numpy as np
-
 
 # RBO 2
 
@@ -295,94 +288,79 @@ SBI_CARD_BG = "#e6f0fa"     # Card background
 # -------------------------------------------
 # 🔧 Custom CSS Styling
 # -------------------------------------------
-st.markdown(
-    f"""
-    <style>
-        body, .stApp {{
-            background-color: {SBI_BG};
-            color: {SBI_BLUE};
-            font-family: 'Segoe UI', sans-serif;
-        }}
+st.markdown(f"""
+<style>
+    /* Overall Background + Text Theme */
+    body, .stApp {{
+        background-color: {SBI_BG};
+        color: {SBI_BLUE};
+        font-family: 'Segoe UI', sans-serif;
+    }}
 
-        /* Headings and labels */
-        .stRadio > label,
-        .stSelectbox > label,
-        .stMultiSelect > label,
-        .stExpander > summary,
-        .stTitle, h1, h2, h3, h4 {{
-            color: {SBI_BLUE};
-            font-weight: 600;
-        }}
+    /* Headings and emphasis */
+    .stRadio > label,
+    .stSelectbox > label,
+    .stMultiSelect > label,
+    .stExpander > summary,
+    .stTitle, h1, h2, h3, h4 {{
+        color: {SBI_BLUE};
+        font-weight: 600;
+    }}
 
-        .stExpander > summary {{
-            font-size: 16px;
-        }}
+    /* Card summary box */
+    .custom-summary-box {{
+        background-color: {SBI_CARD_BG};
+        border-left: 5px solid {SBI_ACCENT};
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-top: 0.5rem;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        color: {SBI_BLUE};
+    }}
 
-        /* Custom summary box */
-        .custom-summary-box {{
-            background-color: {SBI_CARD_BG};
-            border-left: 5px solid {SBI_ACCENT};
-            padding: 1rem 1.5rem;
-            border-radius: 10px;
-            margin-top: 0.5rem;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-            transition: background-color 0.3s ease;
-        }}
-        .custom-summary-box:hover {{
-            background-color: #d6e9fb;
-        }}
+    /* Radio Button Group – Circle & Selected Color */
+    div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child {{
+        border: 2px solid {SBI_BLUE} !important;
+    }}
+    div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child svg {{
+        fill: {SBI_BLUE} !important;
+        color: {SBI_BLUE} !important;
+    }}
+    [data-baseweb="radio"]:hover > div:first-child {{
+        border-color: {SBI_ACCENT} !important;
+        box-shadow: 0 0 0 2px rgba(77, 180, 255, 0.4) !important;
+    }}
 
-        .block-container {{
-            padding-top: 2rem;
-        }}
+    /* Multiselect Tag Styling */
+    span[data-baseweb="tag"] {{
+        background-color: {SBI_BLUE} !important;
+        color: white !important;
+        border-radius: 6px !important;
+        font-weight: 600 !important;
+        border: none !important;
+    }}
+    span[data-baseweb="tag"] svg {{
+        color: white !important;
+    }}
 
-        /* ✅ Multiselect selected tags */
-        span[data-baseweb="tag"] {{
-            background-color: {SBI_BLUE} !important;
-            color: white !important;
-            border-radius: 6px !important;
-            font-weight: 600 !important;
-            border: none !important;
-        }}
-        span[data-baseweb="tag"] svg {{
-            color: white !important;
-        }}
+    /* Dropdown borders and hover color */
+    .css-1d391kg, .css-13cymwt-control {{
+        border: 1px solid {SBI_BLUE} !important;
+        box-shadow: none !important;
+    }}
 
-        /* ✅ Radio button selection - SBI Blue */
-        div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child {{
-            border-color: {SBI_BLUE} !important;
-        }}
-        div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child svg {{
-            fill: {SBI_BLUE} !important;
-            color: {SBI_BLUE} !important;
-        }}
-        [data-baseweb="radio"]:hover > div:first-child {{
-            border-color: {SBI_BLUE} !important;
-            box-shadow: 0 0 0 2px rgba(0, 47, 108, 0.3) !important;
-        }}
+    .css-1n6sfyn-option:hover, .css-1n6sfyn-option[aria-selected="true"] {{
+        background-color: #d6e9fb !important;
+        color: {SBI_BLUE} !important;
+    }}
 
-        /* ✅ Dropdown & multiselect control border */
-        .css-1d391kg, .css-13cymwt-control {{
-            border: 1px solid {SBI_BLUE} !important;
-            box-shadow: none !important;
-        }}
+    .css-1wa3eu0-placeholder, 
+    .css-1uccc91-singleValue {{
+        color: {SBI_BLUE} !important;
+    }}
 
-        /* ✅ Dropdown hover & selected items */
-        .css-1n6sfyn-MenuList .css-1n6sfyn-option:hover,
-        .css-1n6sfyn-MenuList .css-1n6sfyn-option[aria-selected="true"] {{
-            background-color: #d6e9fb !important;
-            color: {SBI_BLUE} !important;
-        }}
-
-        /* ✅ Placeholder and selected value text */
-        .css-1wa3eu0-placeholder, 
-        .css-1uccc91-singleValue {{
-            color: {SBI_BLUE} !important;
-        }}
-    </style>
-    """,
-    unsafe_allow_html=True
-)
+</style>
+""", unsafe_allow_html=True)
 
 # -------------------------------------------
 # 📊 Main UI Layout
@@ -407,9 +385,11 @@ deep_dive_icons = {
 with st.container():
     # RBO Selector – Full Width Row
     # st.markdown("### 🗂️ Select RBO")
+    st.markdown('<h4 class="SBI_ACCENT">🗂️ Select RBO</h4>', unsafe_allow_html=True)
+
     selected_rbo = st.radio(
         "Select RBO:",
-        options=["RBO-1", "RBO-2", "RBO-3"],
+        options=["RBO-1", "RBO-3"],
         horizontal=True
     )
 
