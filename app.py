@@ -272,95 +272,75 @@ rbo_deep_dives = {
 
 import streamlit as st
 
-# -------------------------------------------
 # ✅ Must be the first Streamlit command
-# -------------------------------------------
 st.set_page_config(page_title="RBOgen AI – SBI Regional Insights", layout="wide")
 
-# -------------------------------------------
 # 🎨 SBI Color Theme
-# -------------------------------------------
-SBI_BLUE = "#002f6c"        # Primary SBI blue
-SBI_ACCENT = "#0078d7"      # Accent blue
-SBI_BG = "#f4f6f9"          # Light background
-SBI_CARD_BG = "#e6f0fa"     # Card background
+SBI_BLUE = "#002f6c"
+SBI_ACCENT = "#0078d7"
+SBI_BG = "#ece5dd"           # WhatsApp-like background
+USER_MSG_BG = "#dcf8c6"      # Outgoing (user) messages
+BOT_MSG_BG = "#ffffff"       # Incoming (bot) messages
+CHAT_BORDER = "#d0d0d0"
 
-# -------------------------------------------
 # 🔧 Custom CSS Styling
-# -------------------------------------------
 st.markdown(f"""
 <style>
-    /* Overall Background + Text Theme */
-    body, .stApp {{
+    /* Main Background */
+    .stApp {{
         background-color: {SBI_BG};
-        color: {SBI_BLUE};
         font-family: 'Segoe UI', sans-serif;
     }}
 
-    /* Headings and emphasis */
-    .stRadio > label,
-    .stSelectbox > label,
-    .stMultiSelect > label,
-    .stExpander > summary,
-    .stTitle, h1, h2, h3, h4 {{
+    /* Chat container */
+    .chat-container {{
+        max-width: 800px;
+        margin: auto;
+        padding: 1rem;
+    }}
+
+    /* Chat bubble styles */
+    .user-msg, .bot-msg {{
+        padding: 0.75rem 1rem;
+        margin: 0.5rem 0;
+        border-radius: 15px;
+        max-width: 70%;
+        font-size: 1rem;
+        line-height: 1.4;
+        box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }}
+
+    .user-msg {{
+        background-color: {USER_MSG_BG};
+        margin-left: auto;
+        text-align: left;
+        border: 1px solid {CHAT_BORDER};
+    }}
+
+    .bot-msg {{
+        background-color: {BOT_MSG_BG};
+        margin-right: auto;
+        text-align: left;
+        border: 1px solid {CHAT_BORDER};
+    }}
+
+    /* Message input box at bottom */
+    .stTextInput > div > div > input {{
+        background-color: white;
+        border: 1px solid {SBI_ACCENT};
+        border-radius: 25px;
+        padding: 0.6rem 1rem;
         color: {SBI_BLUE};
-        font-weight: 600;
+        font-size: 1rem;
     }}
 
-    /* Card summary box */
-    .custom-summary-box {{
-        background-color: {SBI_CARD_BG};
-        border-left: 5px solid {SBI_ACCENT};
-        padding: 1rem 1.5rem;
-        border-radius: 10px;
-        margin-top: 0.5rem;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    /* Headings and prompts */
+    .stTitle, h1, h2, h3 {{
         color: {SBI_BLUE};
     }}
-
-    /* Radio Button Group – Circle & Selected Color */
-    div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child {{
-        border: 2px solid {SBI_BLUE} !important;
-    }}
-    div[role="radiogroup"] > label[data-baseweb="radio"] > div:first-child svg {{
-        fill: {SBI_BLUE} !important;
-        color: {SBI_BLUE} !important;
-    }}
-    [data-baseweb="radio"]:hover > div:first-child {{
-        border-color: {SBI_ACCENT} !important;
-        box-shadow: 0 0 0 2px rgba(77, 180, 255, 0.4) !important;
-    }}
-
-    /* Multiselect Tag Styling */
-    span[data-baseweb="tag"] {{
-        background-color: {SBI_BLUE} !important;
-        color: white !important;
-        border-radius: 6px !important;
-        font-weight: 600 !important;
-        border: none !important;
-    }}
-    span[data-baseweb="tag"] svg {{
-        color: white !important;
-    }}
-
-    /* Dropdown borders and hover color */
-    .css-1d391kg, .css-13cymwt-control {{
-        border: 1px solid {SBI_BLUE} !important;
-        box-shadow: none !important;
-    }}
-
-    .css-1n6sfyn-option:hover, .css-1n6sfyn-option[aria-selected="true"] {{
-        background-color: #d6e9fb !important;
-        color: {SBI_BLUE} !important;
-    }}
-
-    .css-1wa3eu0-placeholder, 
-    .css-1uccc91-singleValue {{
-        color: {SBI_BLUE} !important;
-    }}
-
 </style>
 """, unsafe_allow_html=True)
+
 # -------------------------------------------
 # 📊 Main UI Layout - WhatsApp Chat Style
 # -------------------------------------------
@@ -382,7 +362,7 @@ st.markdown("""
         padding: 12px 16px;
         margin: 10px 0;
         border-radius: 12px;
-        max-width: 99%;
+        max-width: 95%;
         position: relative;
         line-height: 1.5;
         font-size: 15px;
