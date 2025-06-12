@@ -375,14 +375,14 @@ st.markdown("""
         background-color: #e5ddd5;
         padding: 20px;
         border-radius: 10px;
-        max-width: 90%;
+        max-width: 100%;
         margin-bottom: 20px;
     }
     .chat-bubble {
         padding: 12px 16px;
         margin: 10px 0;
         border-radius: 12px;
-        max-width: 70%;
+        max-width: 99%;
         position: relative;
         line-height: 1.5;
         font-size: 15px;
@@ -454,7 +454,7 @@ if selected_rbo in rbo_deep_dives:
     selected_deep_dives = st.multiselect(
         "Select one or more deep dive categories:",
         options=deep_dive_options,
-        default=deep_dive_options,
+        # default=deep_dive_options,
         help="Choose specific performance areas to explore.",
         label_visibility="collapsed"
     )
