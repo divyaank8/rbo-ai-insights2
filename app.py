@@ -361,13 +361,53 @@ st.markdown(f"""
 
 </style>
 """, unsafe_allow_html=True)
-
 # -------------------------------------------
-# 📊 Main UI Layout
+# 📊 Main UI Layout - WhatsApp Chat Style
 # -------------------------------------------
 
-st.title("RBO IntelliAI")
-st.markdown("##### GenAI Insights for Regional Business Offices")
+st.title("📲 RBO IntelliAI")
+st.markdown("##### 💬 GenAI Chat Insights for Regional Business Offices")
+
+# Custom CSS for chat bubble styling
+st.markdown("""
+    <style>
+    .chat-container {
+        background-color: #e5ddd5;
+        padding: 20px;
+        border-radius: 10px;
+        max-width: 90%;
+        margin-bottom: 20px;
+    }
+    .chat-bubble {
+        padding: 12px 16px;
+        margin: 10px 0;
+        border-radius: 12px;
+        max-width: 70%;
+        position: relative;
+        line-height: 1.5;
+        font-size: 15px;
+        white-space: pre-wrap;
+    }
+    .user {
+        background-color: #dcf8c6;
+        align-self: flex-end;
+        margin-left: auto;
+    }
+    .bot {
+        background-color: #ffffff;
+        border: 1px solid #ccc;
+        align-self: flex-start;
+        margin-right: auto;
+    }
+    .chat-section-title {
+        font-size: 18px;
+        margin-top: 20px;
+        font-weight: bold;
+        color: #075e54;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
 
 # 💡 Icon mapping for deep dive sections
 deep_dive_icons = {
@@ -379,54 +419,53 @@ deep_dive_icons = {
     "Compliance": "✅",
 }
 
-# ------------------------------
+
+# --------------------------------
 # 🗂️ RBO Selection Panel
-# ------------------------------
+# --------------------------------
 with st.container():
-    # RBO Selector – Full Width Row
-    # st.markdown("### 🗂️ Select RBO")
-    st.markdown('<h4 class="SBI_ACCENT">🗂️ Select RBO</h4>', unsafe_allow_html=True)
+    st.markdown('<div class="chat-section-title">🗂️ Select RBO</div>', unsafe_allow_html=True)
 
     selected_rbo = st.radio(
         "Select RBO:",
         options=["RBO-1", "RBO-3"],
-        horizontal=True
+        horizontal=True,
+        label_visibility="collapsed"
     )
 
-    # Spacer or Divider
-    # st.markdown("---")
+    st.markdown('<div class="chat-section-title">📋 Summary Chat</div>', unsafe_allow_html=True)
+    
+    st.markdown(f"""
+        <div class="chat-container">
+            <div class="chat-bubble bot">{rbo_summaries[selected_rbo]}</div>
+        </div>
+    """, unsafe_allow_html=True)
 
-    # RBO Summary – Full Width Row
-    st.markdown("### 📋 RBO Summary")
-    st.markdown(
-        f"""<div class='custom-summary-box'>{rbo_summaries[selected_rbo]}</div>""",
-        unsafe_allow_html=True
-    )
 
-# ------------------------------
-# 🔍 Deep Dive Panel
-# ------------------------------
+
 # --------------------------------
-# 🔍 Deep Dive Panel
+# 🔍 Deep Dive Panel (WhatsApp Style)
 # --------------------------------
 if selected_rbo in rbo_deep_dives:
-    st.markdown("---")
-    st.markdown("### 🔍 Deep Dive Analysis")
+    st.markdown('<div class="chat-section-title">🔍 Deep Dive Chat</div>', unsafe_allow_html=True)
 
     deep_dive_options = list(rbo_deep_dives[selected_rbo].keys())
-    
-    # Select all by default
+
     selected_deep_dives = st.multiselect(
         "Select one or more deep dive categories:",
         options=deep_dive_options,
-        default=deep_dive_options,  # select all
-        help="Choose specific performance areas to explore."
+        default=deep_dive_options,
+        help="Choose specific performance areas to explore.",
+        label_visibility="collapsed"
     )
 
-    # Show all selected categories collapsed
     for dive in selected_deep_dives:
-        icon = deep_dive_icons.get(dive, "📂")  # fallback icon
-        with st.expander(f"{icon} {dive}", expanded=False):  # collapsed by default
-            st.markdown(rbo_deep_dives[selected_rbo][dive])
+        icon = deep_dive_icons.get(dive, "📂")
+        st.markdown(f"""
+            <div class="chat-container">
+                <div class="chat-bubble user">{icon} {dive}</div>
+                <div class="chat-bubble bot">{rbo_deep_dives[selected_rbo][dive]}</div>
+            </div>
+        """, unsafe_allow_html=True)
 else:
     st.warning("🚧 Deep dive insights not yet available for this RBO.")
