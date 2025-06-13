@@ -335,18 +335,25 @@ st.markdown(f"""
     }}
 
     /* Headings and prompts */
+
     .stTitle, h1, h2, h3 {{
         color: {SBI_BLUE};
+        }}
+
+.rbo-button-row button {{
+        width: 100% !important;
+        height: 45px !important;
+        font-size: 16px !important;
+        white-space: nowrap;
     }}
+	
+
 </style>
 """, unsafe_allow_html=True)
 
-# -------------------------------------------
-# 📊 Main UI Layout - WhatsApp Chat Style
-# -------------------------------------------
 
-st.title("📲 RBO IntelliAI")
-st.markdown("##### 💬 GenAI Chat Insights for Regional Business Offices")
+
+
 
 # Custom CSS for chat bubble styling
 st.markdown("""
@@ -385,8 +392,137 @@ st.markdown("""
         font-weight: bold;
         color: #075e54;
     }
+
+
+    .whatsapp-header {
+        background-color: #ffffff;
+        padding: 10px 16px;
+        border-bottom: 1px solid #ccc;
+        display: flex;
+        align-items: center;
+    }
+    .header-img {
+        border-radius: 50%;
+        height: 40px;
+        margin-right: 12px;
+    }
+    .header-name {
+        font-weight: bold;
+        font-size: 16px;
+    }
+    .header-meta {
+        font-size: 13px;
+        color: gray;
+    }
+    .header-verified {
+        height: 14px;
+        margin-left: 4px;
+        vertical-align: middle;
+    }
+    div.stButton > button {
+        min-width: 32% !important;
+        max-width: 100% !important;
+        height: 30px !important;
+        font-size: 12px !important;
+        white-space: nowrap;
+    }
+
     </style>
 """, unsafe_allow_html=True)
+
+
+
+
+
+
+
+
+
+
+
+
+# -------------------------------------------
+# 📊 Main UI Layout - WhatsApp Chat Style
+# -------------------------------------------
+
+# st.title("📲 RBO IntelliAI")
+# st.markdown("##### 💬 GenAI Chat Insights for RBO")
+
+
+st.markdown("""
+<div class="whatsapp-header">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/c/cc/SBI-logo.svg" class="header-img">
+    <div>
+        <div class="header-name">📲 RBO IntelliAI <img src="https://cdn-icons-png.flaticon.com/512/1828/1828640.png" class="header-verified"></div>
+        <div class="header-meta">GenAI Chat Insights for RBO</div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
+	
+
+# Setup session state to track selected RBO
+if "selected_rbo" not in st.session_state:
+    st.session_state.selected_rbo = "RBO-1"
+
+rbo_options = ["RBO-1", "RBO-3", "RBO-2"]
+
+if "selected_rbo" not in st.session_state:
+    st.session_state.selected_rbo = "RBO-1"
+if "loading" not in st.session_state:
+    st.session_state.loading = False
+if "content_reset" not in st.session_state:
+    st.session_state.content_reset = False
+
+def on_rbo_click(rbo):
+    if st.session_state.selected_rbo != rbo:
+        st.session_state.loading = True
+        st.session_state.selected_rbo = rbo
+        st.session_state.content_reset = False
+
+
+
+
+# --- RBO Button Row ---
+
+
+
+with st.container():
+
+    st.markdown("\n**Select the RBO:**")
+
+    cols = st.columns(len(rbo_options), gap="small")  # Use small gap for tighter spacing
+    for i, rbo in enumerate(rbo_options):
+        with cols[i]:
+            is_selected = st.session_state.selected_rbo == rbo
+            button_label = f"{rbo}" if is_selected else rbo
+            if st.button(button_label, key=f"btn_{rbo}", use_container_width=True):
+                on_rbo_click(rbo)
+
+
+
+selected_rbo = st.session_state.selected_rbo
+
+loading_placeholder = st.empty()
+
+if st.session_state.loading:
+    with loading_placeholder.container():
+        with st.spinner(f"Loading data for {selected_rbo}..."):
+            time.sleep(1.5)
+            st.session_state.loading = False
+            st.session_state.content_reset = True
+else:
+    loading_placeholder.empty()
+
+
+
+
+if st.session_state.loading:
+    with st.spinner(f"Loading data for {selected_rbo}..."):
+        time.sleep(1.5)
+        st.session_state.loading = False
+        st.session_state.content_reset = True
+
+
 
 
 # 💡 Icon mapping for deep dive sections
@@ -404,16 +540,8 @@ deep_dive_icons = {
 # 🗂️ RBO Selection Panel
 # --------------------------------
 with st.container():
-    st.markdown('<div class="chat-section-title">🗂️ Select RBO</div>', unsafe_allow_html=True)
 
-    selected_rbo = st.radio(
-        "Select RBO:",
-        options=["RBO-1", "RBO-3"],
-        horizontal=True,
-        label_visibility="collapsed"
-    )
-
-    st.markdown('<div class="chat-section-title">📋 Summary Chat</div>', unsafe_allow_html=True)
+    #st.markdown('<div class="chat-section-title">📋 Summary Chat</div>', unsafe_allow_html=True)
     
     st.markdown(f"""
         <div class="chat-container">
@@ -426,20 +554,33 @@ with st.container():
 # --------------------------------
 # 🔍 Deep Dive Panel (WhatsApp Style)
 # --------------------------------
+
+
 if selected_rbo in rbo_deep_dives:
-    st.markdown('<div class="chat-section-title">🔍 Deep Dive Chat</div>', unsafe_allow_html=True)
+    st.markdown('<div class="chat-section-title">Select Segments for more info</div>', unsafe_allow_html=True)
 
     deep_dive_options = list(rbo_deep_dives[selected_rbo].keys())
 
-    selected_deep_dives = st.multiselect(
-        "Select one or more deep dive categories:",
-        options=deep_dive_options,
-        # default=deep_dive_options,
-        help="Choose specific performance areas to explore.",
-        label_visibility="collapsed"
-    )
+    # Initialize session state to track selected deep dives
+    if "selected_deep_dives" not in st.session_state:
+        st.session_state.selected_deep_dives = []
 
-    for dive in selected_deep_dives:
+    cols = st.columns(len(deep_dive_options), gap="small")
+    for i, dive in enumerate(deep_dive_options):
+        with cols[i]:
+            is_selected = dive in st.session_state.selected_deep_dives
+            icon = deep_dive_icons.get(dive, "📂")
+            label = f"✅ {icon} {dive}" if is_selected else f"{icon} {dive}"
+
+            # Use a button to toggle selection state
+            if st.button(label, key=f"btn_deep_{dive}", use_container_width=True):
+                if is_selected:
+                    st.session_state.selected_deep_dives.remove(dive)
+                else:
+                    st.session_state.selected_deep_dives.append(dive)
+
+    # Display selected deep dives content
+    for dive in st.session_state.selected_deep_dives:
         icon = deep_dive_icons.get(dive, "📂")
         st.markdown(f"""
             <div class="chat-container">
@@ -447,5 +588,8 @@ if selected_rbo in rbo_deep_dives:
                 <div class="chat-bubble bot">{rbo_deep_dives[selected_rbo][dive]}</div>
             </div>
         """, unsafe_allow_html=True)
+
 else:
     st.warning("🚧 Deep dive insights not yet available for this RBO.")
+
+
